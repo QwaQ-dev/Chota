@@ -1,0 +1,24 @@
+/* TEAM */
+        Dev: Daniil Kazaev
+        Twitter: @kaza3v
+        Site: kazaev.dev
+        From: Qazaqstan, Aqtóbe
+
+/* THANKS */
+        Bos: Mugalim Abdulsabyr
+        From: Qazaqstan, Aqtóbe
+        
+        Nedobos: Kesio Dev
+        Site: kesio.dev
+        From: Qazaqstan, Aqtóbe
+
+        NoName: Daniyar Zharmukhabet
+        From: Qazaqstan, Aqtóbe
+        
+        And thanks to all who helped me with this project
+
+/* SITE */
+        Last update: 2023/06/16
+        Standards: PHP, HTML5, CSS3, JS
+        Components: Laravel, jQuery
+        IDE: Visual Studio Code, SSH
