@@ -47,7 +47,7 @@ class OrdersController extends Controller
             array_push($workers, ['user_id' => $worker->user_id, 'name' => $worker->user["name"]]);
         }
 
-        return view("order.index", compact("orders", "users", "workers"));
+        return view("orders.index", compact("orders", "users", "workers"));
     }
 
     public function create()
