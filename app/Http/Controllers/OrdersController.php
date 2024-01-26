@@ -61,8 +61,9 @@ class OrdersController extends Controller
             "username" => "string|required",
             "typeworks" => "string|required",
             "summ" => "required|string",
-            "executor" => "required|string",
+            "executor" => "required|string"
         ]);
+
 
         if (request()->user()->isWorker()) {
             $data["user_id"] = request()->user()->id;

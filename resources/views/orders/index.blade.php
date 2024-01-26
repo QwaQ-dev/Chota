@@ -38,9 +38,9 @@
                 </div>
 
                 <div class="max-w-xl">
-                    <x-input-label for="type_work" :value="__('Specify the type of work')" />
-                    <x-text-input id="type_work" name="type_work" type="text" class="mt-1 block w-full" list="type_works"
-                                  required autocomplete="type_work" />
+                    <x-input-label for="typeworks" :value="__('Specify the type of work')" />
+                    <x-text-input id="typeworks" name="typesworks" type="text" class="mt-1 block w-full" list="typeworks"
+                                  required autocomplete="typeworks" />
                     <datalist id="type_works">
                         <option value="Изготовление импланта">
                         <option value="Изготовление протезов">
@@ -52,9 +52,9 @@
                 </div>
 
                 <div class="max-w-xl">
-                    <x-input-label for="summ_order" :value="__('Specify a sum')" />
-                    <x-text-input id="summ_order" name="summ_order" type="text" class="mt-1 block w-full" required
-                                  autofocus autocomplete="summ_order" />
+                    <x-input-label for="summ" :value="__('Specify a sum')" />
+                    <x-text-input id="summ" name="summ" type="text" class="mt-1 block w-full" required
+                                  autofocus autocomplete="summ" />
                 </div>
 
                 <div class="max-w-xl">
