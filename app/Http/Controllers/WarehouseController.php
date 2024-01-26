@@ -14,19 +14,18 @@ class WarehouseController extends Controller
     {
         if (request()->user()->isWorker() || request()->user()->isAdmin()) {
             $warehouses = Warehouse::all();
-            return view("warehouse.index", compact('warehouses'));
+            return view('warehouse.index', compact('warehouses'));
         } else {
-            return abort(404);
+            abort(404);
         }
     }
-
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        //
+        // Метод для отображения формы создания нового склада, если это необходимо.
     }
 
     /**
@@ -34,15 +33,18 @@ class WarehouseController extends Controller
      */
     public function store(Request $request)
     {
+        // Валидация данных
         $data = $request->validate([
             'name' => 'required|string',
             'quantity' => 'required|numeric',
-            'delivery' => 'required|date'
+            'delivery' => 'required|date',
         ]);
 
+        // Создание новой записи в базе данных
         Warehouse::create($data);
-        return redirect()->route('warehouse');
 
+        // Перенаправление пользователя после успешного сохранения
+        return redirect()->route('warehouse.index')->with('status', 'Запись успешно добавлена!');
     }
 
     /**
@@ -50,7 +52,7 @@ class WarehouseController extends Controller
      */
     public function show(Warehouse $warehouse)
     {
-        //
+        // Метод для отображения конкретной записи, если это необходимо.
     }
 
     /**
@@ -58,35 +60,28 @@ class WarehouseController extends Controller
      */
     public function edit(Warehouse $warehouse)
     {
-        //
+        // Метод для отображения формы редактирования конкретной записи
+        return view('warehouse.edit', compact('warehouse'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Warehouse $warehouse)
     {
-        // Валидация данных, если необходимо
-        $request->validate([
+        // Валидация данных
+        $data = $request->validate([
             'name' => 'required|string|max:255',
             'quantity' => 'required|numeric',
             'delivery' => 'required|date',
             // Добавьте другие правила валидации по мере необходимости
         ]);
 
-        // Найдем запись в базе данных
-        $warehouse = Warehouse::findOrFail($id);
+        // Обновление данных
+        $warehouse->update($data);
 
-        // Обновим данные
-        $warehouse->update([
-            'name' => $request->input('name'),
-            'quantity' => $request->input('quantity'),
-            'delivery' => $request->input('delivery'),
-            // Обновите с другими полями по мере необходимости
-        ]);
-
-        // Вернем пользователя назад или куда-то еще
-        return redirect()->route('warehouse.update')->with('status', 'Данные обновлены успешно!');
+        // Перенаправление пользователя после успешного обновления
+        return redirect()->route('warehouse')->with('status', 'Данные обновлены успешно!');
     }
 
     /**
@@ -94,8 +89,6 @@ class WarehouseController extends Controller
      */
     public function destroy(Warehouse $warehouse)
     {
-        //
+        // Метод для удаления записи, если это необходимо.
     }
-
-
 }
