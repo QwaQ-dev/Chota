@@ -53,53 +53,39 @@
     </x-modal>
 
 
-    @foreach ($warehouse as $warehouse)
+    @foreach ($warehouse as $item)
         <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-10">
             <div class="p-6 text-gray-900 dark:text-gray-100">
                 <div class="flex justify-between capitalize">
                     <div class="flex justify-between">
-                        <span>{{ isset($users[warehouse->user_id - 1]) ? $users[warehouse->user_id - 1]->name : 'N/A' }}</span>
+                        <span>{{ isset($users[$item->user_id - 1]) ? $users[$item->user_id - 1]->name : 'N/A' }}</span>
                         <div class="gray line"></div>
-                        <span>{{ warehouse->cabinet }} {{ __('navigation.task.cabinet') }}</span>
+                        <span>{{ $item->cabinet }} {{ __('navigation.task.cabinet') }}</span>
                     </div>
                     <div class="flex justify-end">
                     <span>
-                        {{ Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $order->updated_at)->locale(App::currentLocale())->isoFormat('dddd, D MMMM H:mm') }}
+                        {{ Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $item->updated_at)->locale(App::currentLocale())->isoFormat('dddd, D MMMM H:mm') }}
                     </span>
-                        <!-- Кнопки редактирования -->
-                        @if (Auth::user()->isWorker() && $order->status_id == 1 && $order->performer_id == Auth::user()->id)
-                            <div class="flex ml-2">
-                                <form action="{{ route('task.completed', $order->id) }}" method="post">
-                                    @csrf
-                                    @method('patch')
-                                    <x-primary-button name="accept" value="{{ $order->id }}">
-                                        {{ __('navigation.task.done') }}
-                                    </x-primary-button>
-                                </form>
-                                <form action="{{ route('task.update', $order->id) }}" method="post" class="ml-3">
-                                    @csrf
-                                    @method('patch')
-                                    <x-primary-button name="refuse" value="{{ $order->id }}">
-                                        {{ __('navigation.task.cancel') }}
-                                    </x-primary-button>
-                                </form>
-                            </div>
+                        <!-- Использование компонента edit-buttons.blade.php -->
+                        @if (Auth::user()->isWorker() && $item->status_id == 1 && $item->performer_id == Auth::user()->id)
+                            <x-edit-buttons :warehouse="$item" />
                         @endif
                         <!-- Конец блока кнопок редактирования -->
                     </div>
                 </div>
                 <div class="mt-4">
-                    <span>{{ $order->title }}</span>
-                    <span>{{ $order->description }}</span>
-                    @if ($order->status_id == 1)
+                    <span>{{ $item->title }}</span>
+                    <span>{{ $item->description }}</span>
+                    @if ($item->status_id == 1)
                         <span class="flex justify-end mt-6 mr-2">{{ __('navigation.task.performer') }}:
-                        {{ $workers[array_search($order->performer_id, array_column($workers, 'user_id'))]['name'] }}
+                        {{ $workers[array_search($item->performer_id, array_column($workers, 'user_id'))]['name'] }}
                     </span>
                     @endif
                 </div>
             </div>
         </div>
     @endforeach
+
 
 
 
