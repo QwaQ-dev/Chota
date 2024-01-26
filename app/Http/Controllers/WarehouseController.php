@@ -64,9 +64,29 @@ class WarehouseController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Warehouse $warehouse)
+    public function update(Request $request, $id)
     {
-        //
+        // Валидация данных, если необходимо
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'quantity' => 'required|numeric',
+            'delivery' => 'required|date',
+            // Добавьте другие правила валидации по мере необходимости
+        ]);
+
+        // Найдем запись в базе данных
+        $warehouse = Warehouse::findOrFail($id);
+
+        // Обновим данные
+        $warehouse->update([
+            'name' => $request->input('name'),
+            'quantity' => $request->input('quantity'),
+            'delivery' => $request->input('delivery'),
+            // Обновите с другими полями по мере необходимости
+        ]);
+
+        // Вернем пользователя назад или куда-то еще
+        return redirect()->route('warehouse.update')->with('status', 'Данные обновлены успешно!');
     }
 
     /**

@@ -53,38 +53,72 @@
     </x-modal>
 
 
-    @foreach ($warehouse as $item)
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-10">
-            <div class="p-6 text-gray-900 dark:text-gray-100">
-                <div class="flex justify-between capitalize">
-                    <div class="flex justify-between">
-                        <span>{{ isset($users[$item->user_id - 1]) ? $users[$item->user_id - 1]->name : 'N/A' }}</span>
-                        <div class="gray line"></div>
-                        <span>{{ $item->cabinet }} {{ __('navigation.task.cabinet') }}</span>
-                    </div>
-                    <div class="flex justify-end">
-                    <span>
-                        {{ Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $item->updated_at)->locale(App::currentLocale())->isoFormat('dddd, D MMMM H:mm') }}
-                    </span>
-                        <!-- Использование компонента edit-buttons.blade.php -->
-                        @if (Auth::user()->isWorker() && $item->status_id == 1 && $item->performer_id == Auth::user()->id)
-                            <x-edit-buttons :warehouse="$item" />
-                        @endif
-                        <!-- Конец блока кнопок редактирования -->
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <span>{{ $item->title }}</span>
-                    <span>{{ $item->description }}</span>
-                    @if ($item->status_id == 1)
-                        <span class="flex justify-end mt-6 mr-2">{{ __('navigation.task.performer') }}:
-                        {{ $workers[array_search($item->performer_id, array_column($workers, 'user_id'))]['name'] }}
-                    </span>
-                    @endif
-                </div>
-            </div>
-        </div>
-    @endforeach
+    <div class="mt-8">
+        <div class="overflow-x-auto bg-gray-800 dark:bg-gray-700 shadow-md rounded-lg">
+            <table class="min-w-full bg-gray-800 dark:bg-gray-1100 text-white">
+                <thead>
+                <tr>
+                    <th class="py-2">#</th>
+                    <th class="py-2">{{ __('Product Name') }}</th>
+                    <th class="py-2">{{ __('Quantity') }}</th>
+                    <th class="py-2">{{ __('Delivery Date') }}</th>
+                    <th class="py-2">{{ __('Actions') }}</th> <!-- Добавлен столбец для кнопки действий -->
+                </tr>
+                </thead>
+                <!-- ... -->
+
+                <tbody>
+                @foreach ($warehouses as $warehouse)
+                    <tr x-data="{ open: false }">
+                        <th class="py-2">{{ $loop->iteration }}</th>
+                        <th class="py-2">{{ $warehouse->name }}</th>
+                        <th class="py-2">{{ $warehouse->quantity }}</th>
+                        <th class="py-2">{{ $warehouse->delivery }}</th>
+                        <th class="py-2">
+                            <button @click="open = true" class="bg-blue-500 text-white py-1 px-2 rounded hover:bg-blue-700">
+                                Изменить
+                            </button>
+                        </th>
+
+                        <!-- Модальное окно редактирования -->
+                        <div x-show="open" @click.away="open = false" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                            <div class="bg-white p-6 rounded-lg shadow-md">
+                                <!-- Вставьте сюда содержимое для редактирования, например, форму -->
+                                <form method="post" action="{{ route('warehouse.update', $warehouse->id) }}">
+                                    @csrf
+                                    @method('patch')
+                                    <!-- ... Вставьте поля для редактирования данных -->
+                                    <div class="max-w-xl">
+                                        <x-input-label for="product_name" :value="__('Product Name')" />
+                                        <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="$warehouse->name" required autofocus />
+                                    </div>
+
+                                    <div class="max-w-xl">
+                                        <x-input-label for="quantity_product" :value="__('Quantity')" />
+                                        <x-text-input id="quantity" name="quantity" type="numeric" class="mt-1 block w-full" :value="$warehouse->quantity" required />
+                                    </div>
+
+                                    <div>
+                                        <x-input-label for="delivery" :value="__('Delivery Date')" />
+                                        <input type="date" id="delivery" name="delivery" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm" value="{{ $warehouse->delivery }}" min="2023-01-01" max="2033-12-31" style="border-radius: 0.5em;">
+                                    </div>
+
+                                    <div class="flex items-center gap-4 mt-4">
+                                        <button type="submit" class="bg-blue-500 text-white py-1 px-2 rounded hover:bg-blue-700">
+                                            Сохранить
+                                        </button>
+                                        <button @click="open = false" class="bg-gray-500 text-white py-1 px-2 rounded hover:bg-gray-700">
+                                            Отмена
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </tr>
+                @endforeach
+                </tbody>
+
+                <!-- ... -->
 
 
 
