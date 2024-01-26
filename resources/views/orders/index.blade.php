@@ -27,7 +27,7 @@
                     {{ __('To create a task, fill in the fields below.') }}
                 </p>
             </header>
-            <form method="post" action="{{ route('task.store') }}" class="mt-6 space-y-6">
+            <form method="post" action="{{ route('orders.store') }}" class="mt-6 space-y-6">
                 @csrf
                 @method('post')
 
@@ -38,10 +38,10 @@
                 </div>
 
                 <div class="max-w-xl">
-                    <x-input-label for="typeworks" :value="__('Specify the type of work')" />
-                    <x-text-input id="typeworks" name="typesworks" type="text" class="mt-1 block w-full" list="typeworks"
+                    <x-input-label for="type_work" :value="__('Specify the type of work')" />
+                    <x-text-input id="typeworks" name="typeworks" type="text" class="mt-1 block w-full" list="typeworks"
                                   required autocomplete="typeworks" />
-                    <datalist id="type_works">
+                    <datalist id="typeworks">
                         <option value="Изготовление импланта">
                         <option value="Изготовление протезов">
                         <option value="Изготовление виниров">
