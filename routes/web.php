@@ -43,6 +43,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/orders', [OrdersController::class, 'index'])->name('orders');
     Route::post('/orders', [OrdersController::class, 'store'])->name('orders.store');
+    Route::patch('/orders/update/{order}', [OrdersController::class, 'update'])->name('orders.update');
+    Route::patch('/orders/completed/{order}', [OrdersController::class, 'completed'])->name('orders.completed');
+    Route::delete('/orders/{order}', [OrdersController::class, 'destroy'])->name('orders.destroy');
+    Route::post('/orders/export', [OrdersController::class, 'export'])->name('order.export');
 
 
     Route::get('/warehouse', [WarehouseController::class, 'index'])->name('warehouse');

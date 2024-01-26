@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Task;
 use App\Models\User;
 use App\Models\Order;  // Импорт модели Order
 use App\Models\RolesUsers;
@@ -77,11 +78,63 @@ class OrdersController extends Controller
 
         $message = "Новая заявка.\nПользователь: ".User::find($data["user_id"])->name.".\nИсполнитель: ".$data["executor"].".\nТип работ: ".$data["typeworks"].".\nСумма: ".$data["summ"].".\nПроверьте список заявок!";
 
-        return redirect()->route('order');
+        return redirect()->route('orders');
     }
 
-    // Остальные методы также заменены на соответствующие операции с заказами
-    // ...
+    public function update(Order $order)
+    {
+        if (request()->user()->isWorker() || request()->user()->isAdmin()) {
+            $performer_id = request()->performer_id ?? request()->user()->id;
+            if (request()->accept) {
+                $order = Order::find(request()->accept);
+                $order->update([
+                    "performer_id" => $performer_id,
+                    "status_id" => 1
+                ]);
+            } elseif (request()->refuse) {
+                $order = Order::find(request()->refuse);
+                $order->update([
+                    "performer_id" => Null,
+                    "status_id" => 0
+                ]);
+            }
+            $order = Order::where(["status_id" => 1, "performer_id" => $performer_id])->get();
+            $users = User::all();
+            return redirect()->route('orders');
+            // return view("task.update", compact("tasks", "users"));
+        } else {
+            return abort(404);
+        }
+    }
+
+
+    public function completed(Order $order)
+    {
+        if (request()->user()->isWorker() || request()->user()->isAdmin()) {
+            $order = Order::find(request()->accept);
+            $order->update([
+                "performer_id" => $order->performer_id,
+                "status_id" => 2
+            ]);
+            $tasks = Order::where(["status_id" => 1, "performer_id" => request()->performer_id])->get();
+            $users = User::all();
+            return redirect()->route('orders');
+            // return view("task.update", compact("tasks", "users"));
+        } else {
+            return abort(404);
+        }
+    }
+
+    public function destroy($order)
+    {
+        if (request()->user()->isAdmin()) {
+            $order = Order::find($order);
+            $order->delete();
+            return redirect()->route('orders');
+        } else {
+            return abort(404);
+        }
+    }
 
     public function export()
     {

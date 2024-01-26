@@ -53,32 +53,54 @@
     </x-modal>
 
 
-    <div class="mt-8">
-
-
-        <div class="overflow-x-auto bg-gray-800 dark:bg-gray-700 shadow-md rounded-lg">
-            <table class="min-w-full bg-gray-800 dark:bg-gray-1100 text-white">
-                <thead>
-                <tr>
-                    <th class="py-2">#</th>
-                    <th class="py-2">{{ __('Product Name') }}</th>
-                    <th class="py-2">{{ __('Quantity') }}</th>
-                    <th class="py-2">{{ __('Delivery Date') }}</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach ($warehouses as $warehouse)
-                    <tr>
-                        <th class="py-2">{{ $loop->iteration }}</th>
-                        <th class="py-2">{{ $warehouse->name }}</th>
-                        <th class="py-2">{{ $warehouse->quantity }}</th>
-                        <th class="py-2">{{ $warehouse->delivery }}</th>
-                    </tr>
-                @endforeach
-                </tbody>
-            </table>
+    @foreach ($warehouse as $warehouse)
+        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-10">
+            <div class="p-6 text-gray-900 dark:text-gray-100">
+                <div class="flex justify-between capitalize">
+                    <div class="flex justify-between">
+                        <span>{{ isset($users[warehouse->user_id - 1]) ? $users[warehouse->user_id - 1]->name : 'N/A' }}</span>
+                        <div class="gray line"></div>
+                        <span>{{ warehouse->cabinet }} {{ __('navigation.task.cabinet') }}</span>
+                    </div>
+                    <div class="flex justify-end">
+                    <span>
+                        {{ Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $order->updated_at)->locale(App::currentLocale())->isoFormat('dddd, D MMMM H:mm') }}
+                    </span>
+                        <!-- Кнопки редактирования -->
+                        @if (Auth::user()->isWorker() && $order->status_id == 1 && $order->performer_id == Auth::user()->id)
+                            <div class="flex ml-2">
+                                <form action="{{ route('task.completed', $order->id) }}" method="post">
+                                    @csrf
+                                    @method('patch')
+                                    <x-primary-button name="accept" value="{{ $order->id }}">
+                                        {{ __('navigation.task.done') }}
+                                    </x-primary-button>
+                                </form>
+                                <form action="{{ route('task.update', $order->id) }}" method="post" class="ml-3">
+                                    @csrf
+                                    @method('patch')
+                                    <x-primary-button name="refuse" value="{{ $order->id }}">
+                                        {{ __('navigation.task.cancel') }}
+                                    </x-primary-button>
+                                </form>
+                            </div>
+                        @endif
+                        <!-- Конец блока кнопок редактирования -->
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <span>{{ $order->title }}</span>
+                    <span>{{ $order->description }}</span>
+                    @if ($order->status_id == 1)
+                        <span class="flex justify-end mt-6 mr-2">{{ __('navigation.task.performer') }}:
+                        {{ $workers[array_search($order->performer_id, array_column($workers, 'user_id'))]['name'] }}
+                    </span>
+                    @endif
+                </div>
+            </div>
         </div>
-    </div>
+    @endforeach
+
 
 
 </x-app-layout>

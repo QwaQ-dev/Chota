@@ -106,7 +106,7 @@ class TasksController extends Controller
             ]);
             $tasks = Task::where(["status_id" => 1, "performer_id" => request()->performer_id])->get();
             $users = User::all();
-            return redirect()->route('task');
+            return redirect()->route('order');
             // return view("task.update", compact("tasks", "users"));
         } else {
             return abort(404);

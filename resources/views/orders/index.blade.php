@@ -105,47 +105,68 @@
                     <summary
                         class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm mt-1 block w-full">
                         {{ __('navigation.task.active') }}</summary>
-                    @foreach ($tasks[0] as $task)
+                    @foreach ($orders[0] as $order)
                         <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-10">
                             <div class="p-6 text-gray-900 dark:text-gray-100">
-                                <div class="flex justify-between capitalize">
-                                    <div class="flex justify-between">
-                                        <span>{{ $users[$task->user_id - 1]->name }}</span>
-                                        <div class="gray line"></div>
-                                        <span>{{ $task->cabinet }}
-                                            {{ __('navigation.task.cabinet') }}</span>
+                                <form method="post" action="{{ route('orders.update', $order->id) }}" class="mt-6 space-y-6">
+                                    @csrf
+                                    @method('patch')
+
+                                    <div class="max-w-xl">
+                                        <label class="text-lg font-medium text-gray-900 dark:text-gray-100" for="order_id">
+                                            Заказ
+                                        </label>
+                                        <span class="block mt-1">{{ $order->id }}</span>
                                     </div>
-                                    <div class="flex justify-end">
-                                        <span>
-                                            {{ Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $task->updated_at)->locale(App::currentLocale())->isoFormat('dddd, D MMMM H:mm') }}
-                                        </span>
+
+                                    <div class="max-w-xl">
+                                        <label class="text-lg font-medium text-gray-900 dark:text-gray-100" for="username">
+                                            Клиент
+                                        </label>
+                                        <span class="block mt-1">{{ $order->username }}</span>
                                     </div>
-                                </div>
-                                <div class="mt-4">
-                                    <span>{{ $task->title }}</span>
-                                    <span>{{ $task->description }}</span>
-                                    @if ($task->status_id == 1)
-                                        <span class="flex justify-end mt-6 mr-2">{{ __('navigation.task.performer') }}:
-                                            {{ $workers[array_search($task->performer_id, array_column($workers, 'user_id'))]['name'] }}</span>
-                                    @endif
-                                    @if (Auth::user()->isWorker() && $task->status_id == 1 && $task->performer_id == Auth::user()->id)
+
+                                    <div class="max-w-xl">
+                                        <label class="text-lg font-medium text-gray-900 dark:text-gray-100" for="typeworks">
+                                            Работа
+                                        </label>
+                                        <span class="block mt-1">{{ $order->typeworks }}</span>
+                                    </div>
+
+                                    <div class="max-w-xl">
+                                        <label class="text-lg font-medium text-gray-900 dark:text-gray-100" for="summ">
+                                            Сумма заказа
+                                        </label>
+                                        <span class="block mt-1">{{ $order->summ }}</span>
+                                    </div>
+
+                                    <div class="max-w-xl">
+                                        <label class="text-lg font-medium text-gray-900 dark:text-gray-100" for="executor">
+                                            Исполнители
+                                        </label>
+                                        <span class="block mt-1">{{ $order->executor }}</span>
+                                    </div>
+
+                                    <!-- Добавьте другие поля по необходимости -->
+
+                                    <div class="flex items-center gap-4">
                                         <div class="flex justify-end mt-4">
-                                            <form action="{{ route('task.completed', $task->id) }}" method="post">
+                                            <form action="{{ route('orders.completed', $order->id) }}" method="post">
                                                 @csrf
                                                 @method('patch')
-                                                <x-primary-button name="accept" value="{{ $task->id }}">
+                                                <x-primary-button name="accept" value="{{ $order->id }}">
                                                     {{ __('navigation.task.done') }}</x-primary-button>
                                             </form>
-                                            <form action="{{ route('task.update', $task->id) }}" method="post"
+                                            <form action="{{ route('orders.update', $order->id) }}" method="post"
                                                   class="ml-3">
                                                 @csrf
                                                 @method('patch')
-                                                <x-primary-button name="refuse" value="{{ $task->id }}">
-                                                    {{ __('navigation.task.cancel') }}</x-primary-button>
+                                                <x-primary-button name="refuse" value="{{ $order->id }}">
+                                                    {{ __('navigation.task.assign') }}</x-primary-button>
                                             </form>
                                         </div>
-                                    @endif
-                                </div>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     @endforeach
@@ -154,7 +175,7 @@
                     <summary
                         class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm mt-1 block w-full">
                         {{ __('navigation.task.wait') }}</summary>
-                    @if (count($tasks[1]) == 0)
+                    @if ($orders !== null && count($orders[1]) == 0)
                         <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-10">
                             <div class="p-6 text-gray-900 dark:text-gray-100">
                                 <div class="flex justify-between">{{ __('navigation.task.information') }}</div>
@@ -162,29 +183,29 @@
                             </div>
                         </div>
                     @else
-                        @foreach ($tasks[1] as $task)
+                        @foreach ($orders[1] as $order)
                             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-10">
                                 <div class="p-6 text-gray-900 dark:text-gray-100">
                                     <div class="flex justify-between capitalize">
                                         <div class="flex justify-between">
-                                            <span class="task__header_user">{{ $users[$task->user_id - 1]->name }}
+                                            <span class="task__header_user">{{ $users[$order->user_id - 0]->name }}
                                             </span>
                                             <div class="gray line"></div>
-                                            <span class="task__header_cabinet">{{ $task->cabinet }}
+                                            <span class="task__header_cabinet">{{ $order->cabinet }}
                                                 {{ __('navigation.task.cabinet') }} </span>
                                         </div>
                                         <div class="flex justify-end">
                                             <span>
-                                                {{ Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $task->created_at)->locale(App::currentLocale())->isoFormat('dddd, D MMMM H:mm') }}
+                                                {{ Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $order->created_at)->locale(App::currentLocale())->isoFormat('dddd, D MMMM H:mm') }}
                                             </span>
                                         </div>
                                     </div>
                                     <div class="mt-4">
-                                        <div class="task__title">{{ $task->title }}</div>
-                                        <div class="task__description">{{ $task->description }}</div>
-                                        @if (Auth::user()->isAdmin() && $task->status_id == 0)
+                                        <div class="task__title">{{ $order->username }}</div>
+                                        <div class="task__description">{{ $order->typeworks }}</div>
+                                        @if (Auth::user()->isAdmin() && $order->status_id == 0)
                                             <div class="flex justify-between mt-6">
-                                                <form action="{{ route('task.destroy', $task->id) }}" method="post">
+                                                <form action="{{ route('orders.destroy', $order->id) }}" method="post">
                                                     @csrf
                                                     @method('delete')
                                                     <x-accept-button>
@@ -192,7 +213,7 @@
                                                     </x-accept-button>
                                                 </form>
 
-                                                <form action="{{ route('task.update', $task->id) }}" method="post">
+                                                <form action="{{ route('orders.update', $order->id) }}" method="post">
                                                     @csrf
                                                     @method('patch')
                                                     <x-select name="performer_id">
@@ -201,7 +222,7 @@
                                                                 {{ $worker['name'] }}</option>
                                                         @endforeach
                                                     </x-select>
-                                                    <x-primary-button name="accept" value="{{ $task->id }}"
+                                                    <x-primary-button name="accept" value="{{ $order->id }}"
                                                                       class="ml-3">
                                                         {{ __('navigation.task.assign') }}
                                                     </x-primary-button>
@@ -216,7 +237,7 @@
                 </details>
                 @if (Auth::user()->isAdmin())
                 @endif
-                @if (Auth::user()->isAdmin() && count($tasks[2]))
+                @if ($orders !== null && is_countable($orders[1]) && count($orders[1]) == 0)
                     <details>
                         <summary
                             class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm mt-1 block w-full">
@@ -242,14 +263,14 @@
                                 <x-primary-button class="ml-3">{{ __('navigation.task.export') }}</x-primary-button>
                             </form>
                         </div>
-                        @foreach ($tasks[2] as $task)
+                        @foreach ($orders[2] as $order)
                             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-10">
                                 <div class="p-6 text-gray-900 dark:text-gray-100">
                                     <div class="flex justify-between capitalize">
                                         <div class="flex justify-between">
-                                            <span>{{ $users[$task->user_id - 1]->name }}</span>
+                                            <span>{{ $users[$order->user_id - 1]->name }}</span>
                                             <div class="gray line"></div>
-                                            <span>{{ $task->cabinet }}
+                                            <span>{{ $order->cabinet }}
                                                 {{ __('navigation.task.cabinet') }}</span>
                                         </div>
                                         <div class="flex justify-end">
@@ -259,11 +280,11 @@
                                         </div>
                                     </div>
                                     <div class="mt-4">
-                                        <span>{{ $task->title }}</span>
-                                        <span>{{ $task->description }}</span>
+                                        <span>{{ $order->title }}</span>
+                                        <span>{{ $order->description }}</span>
                                         <span
                                             class="flex justify-end mt-6 mr-2">{{ __('navigation.task.performer') }}:
-                                            {{ $workers[array_search($task->performer_id, array_column($workers, 'user_id'))]['name'] }}</span>
+                                            {{ $workers[array_search($order->performer_id, array_column($workers, 'user_id'))]['name'] }}</span>
                                     </div>
                                 </div>
                             </div>

@@ -20,6 +20,10 @@ return new class extends Migration
             $table->integer('status_id')->default(0);
             $table->timestamps();
         });
+
+        Schema::table('orders', function (Blueprint $table) {
+            $table->unsignedBigInteger('performer_id')->nullable();
+        });
     }
 
     /**
