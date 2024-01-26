@@ -6,6 +6,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\ProjectsController;
 use App\Http\Controllers\WarehouseController;
+use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\BotController;
 use Illuminate\Support\Facades\Route;
 
@@ -41,6 +42,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/tasks/export', [TasksController::class, 'export'])->name('task.export');
 
     Route::get('/orders', [OrdersController::class, 'index'])->name('orders');
+
 
     Route::get('/warehouse', [WarehouseController::class, 'index'])->name('warehouse');
     Route::post('/warehouse', [WarehouseController::class, 'store'])->name('warehouse.store');

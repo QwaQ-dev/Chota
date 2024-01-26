@@ -11,7 +11,11 @@ class OrdersController extends Controller
      */
     public function index()
     {
-        //
+        if (request()->user()->isWorker() || request()->user()->isAdmin()) {
+            return view("orders.index",);
+        } else {
+            return abort(404);
+        }
     }
 
     /**
