@@ -42,6 +42,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/tasks/export', [TasksController::class, 'export'])->name('task.export');
 
     Route::get('/orders', [OrdersController::class, 'index'])->name('orders');
+    Route::post('/orders', [OrdersController::class, 'store'])->name('orders.store');
 
 
     Route::get('/warehouse', [WarehouseController::class, 'index'])->name('warehouse');

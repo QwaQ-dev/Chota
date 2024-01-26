@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('typeworks');
             $table->string('summ');
             $table->string('executor');
+            $table->integer('status_id')->default(0);
             $table->timestamps();
         });
     }
