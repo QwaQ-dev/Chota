@@ -7,6 +7,7 @@ return [
     'create' => 'Create task',
     'tasks' => 'Tasks',
     'warehouse' => 'warehouse',
+    'orders' => 'orders',
     'team' => 'Team',
     'projects' => 'Project',
     'profile' => 'Profile',

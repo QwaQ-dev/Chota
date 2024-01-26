@@ -7,6 +7,7 @@ return [
     'create' => 'Создать задачу',
     'warehouse' => 'Склад',
     'tasks' => 'Заказы',
+    'orders' => 'Заказы',
     'team' => 'Команда',
     'projects' => 'Проекты',
     'profile' => 'Профиль',

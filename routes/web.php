@@ -40,8 +40,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/tasks/{task}', [TasksController::class, 'destroy'])->name('task.destroy');
     Route::post('/tasks/export', [TasksController::class, 'export'])->name('task.export');
 
+    Route::get('/orders', [OrdersController::class, 'index'])->name('orders');
+
     Route::get('/warehouse', [WarehouseController::class, 'index'])->name('warehouse');
     Route::post('/warehouse', [WarehouseController::class, 'store'])->name('warehouse.store');
+
+
+
+
 
 //    Route::get('/projects', [ProjectsController::class, 'index'])->name("project");
 //    Route::get('/projects/create', [ProjectsController::class, 'create'])->name('project.create');
