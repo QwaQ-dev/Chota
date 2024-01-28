@@ -44,7 +44,7 @@ class WarehouseController extends Controller
         Warehouse::create($data);
 
         // Redirect the user after successful saving
-        return redirect()->route('warehouse.index')->with('status', 'Record added successfully!');
+        return redirect()->route('warehouse')->with('status', 'Record added successfully!');
     }
 
     /**
@@ -67,7 +67,7 @@ class WarehouseController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id, Warehouse $warehouse)
+    public function update(Request $request, $id)
     {
         // Validation of data
         $data = $request->validate([
@@ -78,10 +78,10 @@ class WarehouseController extends Controller
         ]);
 
         // Update data
-        $warehouse::findOrFail($id)->update($data);
+        Warehouse::findOrFail($id)->update($data);
 
         // Redirect the user after successful update
-        return redirect()->route('warehouse.index')->with('status', 'Data updated successfully!');
+        return redirect()->route('warehouse')->with('status', 'Data updated successfully!');
     }
 
     /**
