@@ -12,45 +12,89 @@
                 <x-secondary-button x-data="" x-on:click.prevent="$dispatch('open-modal', 'add-new-task')">
                     {{ __('Add new product') }}
                 </x-secondary-button>
+                    <x-secondary-button x-data="" x-on:click.prevent="$dispatch('open-modal', 'changes')">
+                        {{ __('Изменить') }}
+                    </x-secondary-button>
             @endif
         </div>
     </x-slot>
 
-    <x-modal name="add-new-task" focusable>
+        
+        <x-modal name="add-new-task" focusable>
+            <div class="p-6">
+                <header>
+                    <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        {{ __('Create task') }}
+                    </h2>
+                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                        {{ __('To create a task, fill in the fields below.') }}
+                    </p>
+                </header>
+                <form method="post" action="{{ route('warehouse.store') }}" class="mt-6 space-y-6">
+                    @csrf
+                    @method('post')
+
+                    <div class="max-w-xl">
+                        <x-input-label for="product_name" :value="__('Specify the name product')" />
+                        <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" required autofocus autocomplete="product_name" />
+                    </div>
+
+                    <div class="max-w-xl">
+                        <x-input-label for="quantity_product" :value="__('Specify the quantity of the product')" />
+                        <x-text-input id="quantity" name="quantity" type="numeric" class="mt-1 block w-full" required autofocus autocomplete="quantity_product" />
+                    </div>
+
+                    <div>
+                        <x-input-label for="description" :value="__('Specify the delivery date')" />
+                        <input type="date" id="delivery" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm" name="delivery" value="{{ date('Y-m-d', strtotime('-1 month')) }}" min="2023-01-01" max="2033-12-31" style="border-radius: 0.5em;">
+                    </div>
+
+                    <div class="flex items-center gap-4">
+                        <x-primary-button type="submit">{{ __('Add') }}</x-primary-button>
+                    </div>
+
+                </form>
+            </div>
+        </x-modal>
+
+
+
+    <x-modal name="changes" focusable>
         <div class="p-6">
             <header>
                 <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                    {{ __('Create task') }}
+                    {{ __('Что вы хотите изменить?') }}
                 </h2>
                 <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                    {{ __('To create a task, fill in the fields below.') }}
+                    {{ __('Чтобы изменить продукт, выберите его из списка и произведите изменения') }}
                 </p>
             </header>
-            <form method="post" action="{{ route('warehouse.store') }}" class="mt-6 space-y-6">
+            <form method="post" action="{{ route('warehouse.update', ['warehouse' => $warehouse->id]) }}" class="mt-6 space-y-6">
                 @csrf
-                @method('post')
+                @method('put')
 
                 <div class="max-w-xl">
                     <x-input-label for="product_name" :value="__('Specify the name product')" />
-                    <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" required autofocus autocomplete="product_name" />
+                    <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" required autofocus autocomplete="product_name" value="{{ $warehouse->name }}" />
                 </div>
 
                 <div class="max-w-xl">
                     <x-input-label for="quantity_product" :value="__('Specify the quantity of the product')" />
-                    <x-text-input id="quantity" name="quantity" type="numeric" class="mt-1 block w-full" required autofocus autocomplete="quantity_product" />
+                    <x-text-input id="quantity" name="quantity" type="numeric" class="mt-1 block w-full" required autofocus autocomplete="quantity_product" value="{{ $warehouse->quantity }}" />
                 </div>
 
                 <div>
                     <x-input-label for="description" :value="__('Specify the delivery date')" />
-                    <input type="date" id="delivery" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm" name="delivery" value="{{ date('Y-m-d', strtotime('-1 month')) }}" min="2023-01-01" max="2033-12-31" style="border-radius: 0.5em;">
+                    <input type="date" id="delivery" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm" name="delivery" value="{{ $warehouse->delivery }}" min="2023-01-01" max="2033-12-31" style="border-radius: 0.5em;">
                 </div>
 
                 <div class="flex items-center gap-4">
-                    <x-primary-button type="submit">{{ __('Add') }}</x-primary-button>
+                    <x-primary-button type="submit">{{ __('Change') }}</x-primary-button>
                 </div>
             </form>
         </div>
     </x-modal>
+
 
 
     <div class="mt-8">
@@ -62,7 +106,6 @@
                     <th class="py-2">{{ __('Product Name') }}</th>
                     <th class="py-2">{{ __('Quantity') }}</th>
                     <th class="py-2">{{ __('Delivery Date') }}</th>
-                    <th class="py-2">{{ __('Actions') }}</th> <!-- Добавлен столбец для кнопки действий -->
                 </tr>
                 </thead>
                 <!-- ... -->
@@ -74,48 +117,6 @@
                         <th class="py-2">{{ $warehouse->name }}</th>
                         <th class="py-2">{{ $warehouse->quantity }}</th>
                         <th class="py-2">{{ $warehouse->delivery }}</th>
-                        <th class="py-2">
-                            <button @click="openModal = true" class="bg-blue-500 text-white py-1 px-2 rounded hover:bg-blue-700">
-                                Изменить
-                            </button>
-                        </th>
-
-                        <!-- Модальное окно редактирования -->
-                        <div x-data="{ openModal: false }">
-                            <div x-show="openModal" @click.away="openModal = false" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                                <div class="bg-white p-6 rounded-lg shadow-md">
-                                    <!-- Вставьте сюда содержимое для редактирования, например, форму -->
-                                    <form method="post" action="{{ route('warehouse.update', $warehouse->id) }}">
-                                        @csrf
-                                        @method('patch')
-                                        <!-- ... Вставьте поля для редактирования данных -->
-                                        <div class="max-w-xl">
-                                            <x-input-label for="product_name" :value="__('Product Name')" />
-                                            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="$warehouse->name" required autofocus />
-                                        </div>
-
-                                        <div class="max-w-xl">
-                                            <x-input-label for="quantity_product" :value="__('Quantity')" />
-                                            <x-text-input id="quantity" name="quantity" type="numeric" class="mt-1 block w-full" :value="$warehouse->quantity" required />
-                                        </div>
-
-                                        <div>
-                                            <x-input-label for="delivery" :value="__('Delivery Date')" />
-                                            <input type="date" id="delivery" name="delivery" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm" value="{{ $warehouse->delivery }}" min="2023-01-01" max="2033-12-31" style="border-radius: 0.5em;">
-                                        </div>
-
-                                        <div class="flex items-center gap-4 mt-4">
-                                            <button type="submit" class="bg-blue-500 text-white py-1 px-2 rounded hover:bg-blue-700">
-                                                Сохранить
-                                            </button>
-                                            <button @click="openModal = false" class="bg-gray-500 text-white py-1 px-2 rounded hover:bg-gray-700">
-                                                Отмена
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
                     </tr>
                 @endforeach
                 </tbody>

@@ -51,7 +51,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/warehouse', [WarehouseController::class, 'index'])->name('warehouse');
     Route::post('/warehouse', [WarehouseController::class, 'store'])->name('warehouse.store');
-    Route::patch('/warehouse/update/{warehouse}', [WarehouseController::class, 'update'])->name('warehouse.update');
+    Route::post ('/warehouse/update/{warehouse}', [WarehouseController::class, 'update'])->name('warehouse.update');
+
 
 
 
