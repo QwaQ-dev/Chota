@@ -12,6 +12,15 @@
                 <x-secondary-button x-data="" x-on:click.prevent="$dispatch('open-modal', 'add-new-task')">
                     {{ __('Add new product') }}
                 </x-secondary-button>
+                    <div class="mt-4">
+                        <form action="{{ route('warehouse') }}" method="GET">
+                            <div class="flex items-center">
+                                <x-input-label for="search" :value="__('Search')"/>
+                                <x-text-input id="search" name="search" type="text" class="mt-1 block w-full" value="{{ $search }}" />
+                                <x-primary-button type="submit">{{ __('Search') }}</x-primary-button>
+                            </div>
+                        </form>
+                    </div>
             @endif
         </div>
     </x-slot>
@@ -39,7 +48,7 @@
 
                 <div class="max-w-xl">
                     <x-input-label for="quantity_product" :value="__('Specify the quantity of the product')"/>
-                    <x-text-input id="quantity" name="quantity" type="numeric" class="mt-1 block w-full" required
+                    <x-text-input id="quantity" name="quantity" type="numeric" class="mt-1 block w-full p-2" required
                                   autofocus autocomplete="quantity_product"/>
                 </div>
 
@@ -112,7 +121,7 @@
                                 <div class="mt-6 max-w-xl">
                                     <x-input-label for="quantity_product" :value="__('Specify the quantity of the product')"/>
                                     <x-text-input id="quantity" name="quantity" type="numeric"
-                                                  class="mt-1 block w-full" :value="old('quantity', $warehouse->quantity)"
+                                                  class="mt-1 block w-full p-2" :value="old('quantity', $warehouse->quantity)"
                                                   required autofocus
                                                   min="1" max="2147483647"
                                                   autocomplete="name"/>
@@ -128,13 +137,14 @@
                                     <x-input-error class="mt-2" :messages="$errors->get('quantity')"/>
                                 </div>
 
-                                <x-secondary-button x-on:click="$dispatch('close')" class="mt-6">
+                                <x-accept-button class="mt-6">
+                                    {{ __('Edit') }}
+                                </x-accept-button>
+
+                                <x-secondary-button x-on:click="$dispatch('close')" class="ml-3">
                                     {{ __('Cancel') }}
                                 </x-secondary-button>
 
-                                <x-accept-button class="ml-3">
-                                    {{ __('Edit') }}
-                                </x-accept-button>
                             </form>
                         </div>
                     </x-modal>
