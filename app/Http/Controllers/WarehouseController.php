@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Warehouse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class WarehouseController extends Controller
@@ -10,15 +11,32 @@ class WarehouseController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+
+    public function index(Request $request)
     {
         if (request()->user()->isWorker() || request()->user()->isAdmin()) {
-            $warehouses = Warehouse::all();
-            return view('warehouse.index', compact('warehouses'));
+            $sortBy = $request->input('sort_by', 'id');
+            $sortDirection = $request->input('sort_direction', 'asc');
+            $search = $request->input('search');
+
+            $query = Warehouse::orderBy($sortBy, $sortDirection);
+
+            // Добавьте условие поиска
+            if ($search) {
+                $query->where('name', 'like', '%' . $search . '%');
+                // Добавьте другие условия поиска по необходимости
+            }
+
+            $warehouses = $query->paginate(10);
+
+            // Передайте параметры сортировки и результаты поиска в представление
+            return view('warehouse.index', compact('warehouses', 'sortBy', 'sortDirection', 'search'));
         } else {
             abort(404);
         }
     }
+
+
 
     /**
      * Show the form for creating a new resource.

@@ -53,8 +53,14 @@ class OrdersController extends Controller
 
     public function create()
     {
-        return view("order.create");
+        // Проверка роли пользователя
+        if (request()->user()->isUser()) {
+            return abort(403); // Ошибка доступа
+        }
+
+        return view("orders.create");
     }
+
 
     public function store()
     {
@@ -62,24 +68,29 @@ class OrdersController extends Controller
             "username" => "string|required",
             "typeworks" => "string|required",
             "summ" => "required|string",
-            "executor" => "required|string"
+            "executor" => "required|array", // Используйте массив для множественного выбора
         ]);
 
+        // Другие проверки данных
 
-        if (request()->user()->isWorker()) {
-            $data["user_id"] = request()->user()->id;
-            $data["performer_id"] = auth()->id();
-            $data["status_id"] = 1;
-        } else {
-            $data["user_id"] = request()->user()->id;
+        // Создание заказа
+        $order = Order::create([
+            'username' => $data['username'],
+            'typeworks' => $data['typeworks'],
+            'summ' => $data['summ'],
+            'status_id' => 0, // Устанавливаем статус в "ожидание"
+        ]);
+
+        // Привязка исполнителей к заказу
+        foreach ($data['executor'] as $executor) {
+            // Добавьте свою логику для привязки исполнителей
         }
 
-        Order::create($data);
-
-        $message = "Новая заявка.\nПользователь: ".User::find($data["user_id"])->name.".\nИсполнитель: ".$data["executor"].".\nТип работ: ".$data["typeworks"].".\nСумма: ".$data["summ"].".\nПроверьте список заявок!";
+        // Другие действия после создания заказа
 
         return redirect()->route('orders');
     }
+
 
     public function update(Order $order)
     {
