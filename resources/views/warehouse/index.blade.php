@@ -1,25 +1,26 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between align-content-center text-center">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight text-center justify-content-center align-content-center m-1">
+        <div class="flex justify-between">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 {{ __('navigation.warehouse') }}
             </h2>
             @if (Auth::user()->isWorker())
                 @if (session('status') === 'task-added')
                     <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 2000)"
-                       class="text-sm text-gray-600 dark:text-gray-400 m-1">{{ __('Task added.') }}</p>
+                       class="text-sm text-gray-600 dark:text-gray-400">{{ __('Task added.') }}</p>
                 @endif
-                <x-secondary-button class="p-0 m-1" x-data="" x-on:click.prevent="$dispatch('open-modal', 'add-new-task')">
+                <x-secondary-button x-data="" x-on:click.prevent="$dispatch('open-modal', 'add-new-task')">
                     {{ __('Add new product') }}
                 </x-secondary-button>
                     <div class="mt-4">
-                        <form action="{{ route('warehouse') }}" method="GET" class="flex items-center justify-center">
-                            <x-input-label for="search" :value="__('Search')" class="mr-2" />
-                            <x-text-input id="search" name="search" type="text" class="p-2 mr-2" value="{{ $search }}" />
-                            <x-primary-button type="submit">{{ __('Search') }}</x-primary-button>
+                        <form action="{{ route('warehouse') }}" method="GET">
+                            <div class="flex items-center">
+                                <x-input-label for="search" :value="__('Search')"/>
+                                <x-text-input id="search" name="search" type="text" class="mt-1 block w-full" value="{{ $search }}" />
+                                <x-primary-button type="submit">{{ __('Search') }}</x-primary-button>
+                            </div>
                         </form>
                     </div>
-
             @endif
         </div>
     </x-slot>
@@ -59,8 +60,8 @@
                            max="2033-12-31" style="border-radius: 0.5em;">
                 </div>
 
-                <div class="flex items-center gap-4 p-1">
-                    <x-primary-button class="m-1-1" type="submit">{{ __('Add') }}</x-primary-button>
+                <div class="flex items-center gap-4">
+                    <x-primary-button type="submit">{{ __('Add') }}</x-primary-button>
                 </div>
 
 
