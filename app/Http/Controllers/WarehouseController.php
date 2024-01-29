@@ -27,7 +27,7 @@ class WarehouseController extends Controller
                 // Добавьте другие условия поиска по необходимости
             }
 
-            $warehouses = $query->paginate(10);
+            $warehouses = $query->paginate(100);
 
             // Передайте параметры сортировки и результаты поиска в представление
             return view('warehouse.index', compact('warehouses', 'sortBy', 'sortDirection', 'search'));
