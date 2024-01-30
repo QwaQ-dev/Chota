@@ -1,4 +1,5 @@
 <x-app-layout>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <x-slot name="header">
         <div class="flex justify-between">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
@@ -29,7 +30,6 @@
             </header>
             <form method="post" action="{{ route('orders.store') }}" class="mt-6 space-y-6">
                 @csrf
-                @method('post')
 
                 <div class="max-w-xl">
                     <x-input-label for="username" :value="__('Specify the name client')" />
@@ -38,7 +38,7 @@
                 </div>
 
                 <div class="max-w-xl">
-                    <x-input-label for="type_work" :value="__('Specify the type of work')" />
+                    <x-input-label for="typeworks" :value="__('Specify the type of work')" />
                     <x-text-input id="typeworks" name="typeworks" type="text" class="mt-1 block w-full" list="typeworks"
                                   required autocomplete="typeworks" />
                     <datalist id="typeworks">
@@ -52,10 +52,10 @@
                 </div>
 
                 <div class="max-w-xl">
-                    <x-input-label for="type_work" :value="__('Выберите сырье со склада')" />
-                    <x-text-input id="typeworks" name="typeworks" type="text" class="mt-1 block w-full" list="typeworks"
-                                  required autocomplete="typeworks" />
-                    <datalist id="typeworks">
+                    <x-input-label for="quantity" :value="__('Выберите сырье со склада')" />
+                    <x-text-input id="quantity" name="quantity" type="text" class="mt-1 block w-full" list="quantity"
+                                  required autocomplete="quantity" />
+                    <datalist id="quantity">
                         <option value="Изготовление импланта">
                         <option value="Изготовление протезов">
                         <option value="Изготовление виниров">
@@ -86,106 +86,98 @@
                     </datalist>
                 </div>
                 <div class="flex items-center gap-4">
-                    <x-primary-button>{{ __('Create') }}</x-primary-button>
+                    <x-primary-button type="submit">{{ __('Create') }}</x-primary-button>
                 </div>
             </form>
         </div>
     </x-modal>
 
+    <div class="mt-6 text-white mx-auto">
+        @if ($orders)
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                @foreach ($orders as $statusOrders)
+                    <div class="m-6">
+                        <h3 class="text-lg font-semibold mb-4 accordion-trigger">
+                            @if ($loop->index == 0)
+                                {{ __('Выполненные заказы') }} <span class="arrow">&#9660;</span>
+                            @elseif ($loop->index == 1)
+                                {{ __('Ожидаемые заказы') }} <span class="arrow">&#9660;</span>
+                            @else
+                                {{ __('Отмененные заказы') }} <span class="arrow">&#9660;</span>
+                            @endif
+                        </h3>
 
-    @if (Auth::user()->isWorker())
-        {{-- <a class="task_create p-2 fixed right-0 mb-0 w-16 rounded-full z-10 transition shadow bg-white dark:bg-gray-800"
-            href="{{ route('task.create') }}">
-            <img class="text-gray-900 dark:text-gray-100"
-                src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MDBweCIgaGVpZ2h0PSI4MDBweCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTEyIDRDMTIuNTUyMyA0IDEzIDQuNDQ3NzIgMTMgNVYxMUgxOUMxOS41NTIzIDExIDIwIDExLjQ0NzcgMjAgMTJDMjAgMTIuNTUyMyAxOS41NTIzIDEzIDE5IDEzSDEzVjE5QzEzIDE5LjU1MjMgMTIuNTUyMyAyMCAxMiAyMEMxMS40NDc3IDIwIDExIDE5LjU1MjMgMTEgMTlWMTNINUM0LjQ0NzcyIDEzIDQgMTIuNTUyMyA0IDEyQzQgMTEuNDQ3NyA0LjQ0NzcyIDExIDUgMTFIMTFWNUMxMSA0LjQ0NzcyIDExLjQ0NzcgNCAxMiA0WiIgZmlsbD0iIzRmNDZlNSIvPjwvc3ZnPg==">
-        </a> --}}
-    @endif
+                        <div class="accordion-content" style="display: none;">
+                            @if (count($statusOrders) > 0)
+                                @foreach ($statusOrders as $order)
+                                    <div class="bg-white dark:bg-gray-800 p-6 m-4 rounded-lg shadow-md mb-8 w-full">
+                                    <div class="flex flex-col m-4">
+                                        <span class="font-bold">{{ __('Имя клиента:  ') }}</span> {{ $order->username }}
+                                    </div>
+                                    <div class="flex flex-col m-4">
+                                        <span class="font-bold">{{ __('Тип работы: ') }}</span> {{ $order->typeworks }}
+                                    </div>
+                                    <div class="flex flex-col m-4">
+                                        <span class="font-bold">{{ __('Количество сырья: ') }}</span> {{ $order->quantity }}
+                                    </div>
+                                    <div class="flex flex-col m-4">
+                                        <span class="font-bold">{{ __('Сумма заказа: ') }}</span> {{ $order->summ }}
+                                    </div>
+                                    <div class="flex flex-col m-4">
+                                        <span class="font-bold">{{ __('Исполнитель: ') }}</span> {{ $order->executor }}
+                                    </div>
+                                    <div class="flex justify-between mt-4">
+                                        <form method="POST" action="{{ route('orders.accept', $order->id) }}">
+                                            @csrf
+                                            <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded-md">
+                                                {{ __('Выполнено') }}
+                                            </button>
+                                        </form>
 
-    @if (!$orders)
-        <div class="py-12">
-            <div id="tasks" class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-10">
-                    <div class="p-6 text-gray-900 dark:text-gray-100">
-                        <div class="flex justify-between">{{ __('navigation.task.information') }}</div>
-                        <div class="task__body">{{ __('navigation.task.information_text') }}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    @else
-        <div class="py-12">
-            <div id="tasks" class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <details open>
-                    <summary
-                        class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm mt-1 block w-full">
-                        {{ __('navigation.task.active') }}</summary>
-                    @foreach ($orders[0] as $order)
-                        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-10">
-                            <div class="p-6 text-gray-900 dark:text-gray-100 flex justify-around">
-                                <form method="post" action="{{ route('orders.update', $order->id) }}" class="mt-6 space-y-6">
-                                    @csrf
-                                    @method('patch')
-                                    <div class="max-w-xl">
-                                        <label class="text-lg font-bold text-gray-900 dark:text-gray-100" for="order_id">
-                                            Заказ
-                                        </label>
-                                        <span class="block mt-1">{{ $order->id }}</span>
+                                        <form method="POST" action="{{ route('orders.refuse', $order->id) }}">
+                                            @csrf
+                                            <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-md">
+                                                {{ __('Отменить') }}
+                                            </button>
+                                        </form>
                                     </div>
-
-                                    <div class="max-w-xl">
-                                        <label class="text-lg font-bold text-gray-900 dark:text-gray-100" for="username">
-                                            Клиент
-                                        </label>
-                                        <span class="block mt-1">{{ $order->username }}</span>
                                     </div>
-
-                                    <div class="max-w-xl">
-                                        <label class="text-lg font-bold text-gray-900 dark:text-gray-100" for="typeworks">
-                                            Работа
-                                        </label>
-                                        <span class="block mt-1">{{ $order->typeworks }}</span>
-                                    </div>
-
-                                    <div class="max-w-xl">
-                                        <label class="text-lg font-bold text-gray-900 dark:text-gray-100" for="summ">
-                                            Сырье со склада
-                                        </label>
-                                        <span class="block mt-1">{{ $order->summ }}</span>
-                                    </div>
-
-                                    <div class="max-w-xl">
-                                        <label class="text-lg font-bold text-gray-900 dark:text-gray-100" for="summ">
-                                            Сумма заказа
-                                        </label>
-                                        <span class="block mt-1">{{ $order->summ }}</span>
-                                    </div>
-                                </form>
-                                <form method="post" action="{{ route('orders.update', $order->id) }}" class="mt-6 space-y-6">
-                                    @csrf
-                                    @method('patch')
-                                    <div class="max-w-xl">
-                                        <label class="text-lg font-bold text-gray-900 dark:text-gray-100" for="order_id">
-                                            Ход работы
-                                        </label>
-                                    </div>
-
-                                    <div class="max-w-xl">
-                                        <input type="checkbox"
-                                               class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-full border border-gray-900/20 bg-gray transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-700 before:opacity-0 before:transition-opacity checked:border-gray-900 checked:bg-gray-900 checked:before:bg-gray-900 hover:scale-105 hover:before:opacity-0"
-                                               id="customStyle" disabled/>
-                                        <label class="text-lg text-gray-900 dark:text-gray-100 ml-2" for="order_id">
-                                            Имя
-                                        </label>
-                                    </div>
-                                </form>
-                            </div>
+                                @endforeach
+                            @else
+                                <p class="text-gray-500">{{ __('Заказов в этом статусе нет.') }}</p>
+                            @endif
                         </div>
-                    @endforeach
-                </details>
-
-
+                    </div>
+                @endforeach
             </div>
-        </div>
-    @endif
+        @else
+            <p class="text-gray-500">{{ __('Заказов нет.') }}</p>
+        @endif
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('.accordion-trigger').click(function() {
+                $(this).next('.accordion-content').slideToggle();
+                // Переключение стрелочки в зависимости от состояния аккордеона
+                $(this).find('.arrow').html($(this).next('.accordion-content').is(':visible') ? '&#9650;' : '&#9660;');
+            });
+        });
+    </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 </x-app-layout>

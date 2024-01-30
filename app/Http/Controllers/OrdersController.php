@@ -53,58 +53,63 @@ class OrdersController extends Controller
 
     public function create()
     {
-        return view("order.create");
+        return view("orders.create");
     }
 
-    public function store()
+    public function store(Request $request)
     {
-        $data = request()->validate([
-            "username" => "string|required",
-            "typeworks" => "string|required",
-            "summ" => "required|string",
-            "executor" => "required|string"
-        ]);
+        $order = new Order();
+        $order->username = $request->input('username');
+        $order->typeworks = $request->input('typeworks');
+        $order->quantity = $request->input('quantity');
+        $order->summ = $request->input('summ');
+        $order->executor = $request->input('executor');
+        $order->typeuser = 'some_value'; // Fill in according to your logic
+        $order->status_id = 0; // Fill in according to your logic
+        $order->save();
+
+        // Добавим withInput() для сохранения данных введенных в форме
+        return back()->withInput()->with('success', 'Order created successfully');
+
+    }
 
 
-        if (request()->user()->isWorker()) {
-            $data["user_id"] = request()->user()->id;
-            $data["performer_id"] = auth()->id();
-            $data["status_id"] = 1;
-        } else {
-            $data["user_id"] = request()->user()->id;
+    public function update(Request $request, Order $order)
+    {
+        $performer_id = $request->performer_id ?? $request->user()->id;
+
+        if ($request->has('accept')) {
+            $order->update([
+                "performer_id" => $performer_id,
+                "status_id" => 1
+            ]);
+        } elseif ($request->has('refuse')) {
+            $order->update([
+                "performer_id" => null,
+                "status_id" => 2
+            ]);
         }
-
-        Order::create($data);
-
-        $message = "Новая заявка.\nПользователь: ".User::find($data["user_id"])->name.".\nИсполнитель: ".$data["executor"].".\nТип работ: ".$data["typeworks"].".\nСумма: ".$data["summ"].".\nПроверьте список заявок!";
 
         return redirect()->route('orders');
     }
 
-    public function update(Order $order)
+
+    public function accept(Order $order)
     {
-        if (request()->user()->isWorker() || request()->user()->isAdmin()) {
-            $performer_id = request()->performer_id ?? request()->user()->id;
-            if (request()->accept) {
-                $order = Order::find(request()->accept);
-                $order->update([
-                    "performer_id" => $performer_id,
-                    "status_id" => 1
-                ]);
-            } elseif (request()->refuse) {
-                $order = Order::find(request()->refuse);
-                $order->update([
-                    "performer_id" => Null,
-                    "status_id" => 0
-                ]);
-            }
-            $order = Order::where(["status_id" => 1, "performer_id" => $performer_id])->get();
-            $users = User::all();
-            return redirect()->route('orders');
-            // return view("task.update", compact("tasks", "users"));
-        } else {
-            return abort(404);
-        }
+        $order->update([
+            'status_id' => 1,
+        ]);
+
+        return redirect()->route('orders')->with('success', 'Order marked as completed.');
+    }
+
+    public function refuse(Order $order)
+    {
+        $order->update([
+            'status_id' => 2,
+        ]);
+
+        return redirect()->route('orders')->with('success', 'Order marked as cancelled.');
     }
 
 
