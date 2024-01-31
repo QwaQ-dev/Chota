@@ -16,6 +16,7 @@ class OrdersController extends Controller
     public function index()
     {
         if (request()->user()->isUser()) {
+//            dd(Order::where(["user_id" => request()->user()->id, "status_id" => 0])->orderBy("created_at", "DESC")->get());
             $orders = [
                 Order::where(["user_id" => request()->user()->id, "status_id" => 1])->orderBy("created_at", "DESC")->get(),
                 Order::where(["user_id" => request()->user()->id, "status_id" => 0])->orderBy("created_at", "DESC")->get(),
@@ -40,7 +41,7 @@ class OrdersController extends Controller
 
         $users = User::all();
 
-        $workersId = RolesUsers::where("role_id", 2)->get();
+        $workersId = RolesUsers::where("role_id", 1)->get();
 
         $workers = [];
 
@@ -59,11 +60,12 @@ class OrdersController extends Controller
     public function store(Request $request)
     {
         $order = new Order();
+        $order->user_id = $request->input('user_id');
         $order->username = $request->input('username');
         $order->typeworks = $request->input('typeworks');
         $order->quantity = $request->input('quantity');
         $order->summ = $request->input('summ');
-        $order->executor = $request->input('executor');
+//        $order->executor = $request->input('executor');
         $order->typeuser = 'some_value'; // Fill in according to your logic
         $order->status_id = 0; // Fill in according to your logic
         $order->save();

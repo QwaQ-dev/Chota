@@ -60,6 +60,8 @@
                            max="2033-12-31" style="border-radius: 0.5em;">
                 </div>
 
+
+
                 <div class="flex items-center gap-4">
                     <x-primary-button type="submit">{{ __('Add') }}</x-primary-button>
                 </div>
@@ -89,10 +91,13 @@
                         <th class="py-2">{{ $warehouse->name }}</th>
                         <th class="py-2">{{ $warehouse->quantity }}</th>
                         <th class="py-2">{{ $warehouse->delivery }}</th>
+                        @if (Auth::user()->isAdmin())
                         <th class="py-2">
                             <x-secondary-button class="ml-4" x-data=""
                                                 x-on:click.prevent="$dispatch('open-modal', 'edit-item-{{ $warehouse->id }}')">{{ __('Edit') }}</x-secondary-button>
                         </th>
+                        @else
+                        @endif
                     </tr>
                     <x-modal name="edit-item-{{ $warehouse->id }}" focusable>
                         <div class="p-6">

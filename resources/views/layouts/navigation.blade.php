@@ -17,17 +17,22 @@
                     </x-nav-link>
                 </div>
                 @if (Auth::user()->isUser())
+{{--                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">--}}
+{{--                        <x-nav-link :href="route('task.create')" :active="request()->routeIs('task.create')">--}}
+{{--                            {{ __('navigation.create') }}--}}
+{{--                        </x-nav-link>--}}
+{{--                    </div>--}}
                     <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                        <x-nav-link :href="route('task.create')" :active="request()->routeIs('task.create')">
-                            {{ __('navigation.create') }}
+                        <x-nav-link :href="route('orders')" :active="request()->routeIs('orders')">
+                            {{ __('navigation.orders') }}
                         </x-nav-link>
                     </div>
                 @endif
-                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-nav-link :href="route('task')" :active="request()->routeIs('task')">
-                        {{ __('navigation.tasks') }}
-                    </x-nav-link>
-                </div>
+{{--                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">--}}
+{{--                    <x-nav-link :href="route('task')" :active="request()->routeIs('task')">--}}
+{{--                        {{ __('navigation.tasks') }}--}}
+{{--                    </x-nav-link>--}}
+{{--                </div>--}}
                 @if (Auth::user()->isWorker() || Auth::user()->isAdmin())
                     <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                         <x-nav-link :href="route('team')" :active="request()->routeIs('team')">
@@ -109,22 +114,27 @@
             </x-responsive-nav-link>
         </div>
         @if (Auth::user()->isUser())
-            <div class="pt-2 pb-3 space-y-1">
-                <x-responsive-nav-link :href="route('task.create')" :active="request()->routeIs('task.create')">
-                    {{ __('navigation.create') }}
-                </x-responsive-nav-link>
-            </div>
+{{--            <div class="pt-2 pb-3 space-y-1">--}}
+{{--                <x-responsive-nav-link :href="route('task.create')" :active="request()->routeIs('task.create')">--}}
+{{--                    {{ __('navigation.create') }}--}}
+{{--                </x-responsive-nav-link>--}}
+{{--            </div>--}}
         @endif
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('task')" :active="request()->routeIs('task')">
-                {{ __('navigation.tasks') }}
-            </x-responsive-nav-link>
-        </div>
+{{--        <div class="pt-2 pb-3 space-y-1">--}}
+{{--            <x-responsive-nav-link :href="route('task')" :active="request()->routeIs('task')">--}}
+{{--                {{ __('navigation.tasks') }}--}}
+{{--            </x-responsive-nav-link>--}}
+{{--        </div>--}}
         @if (Auth::user()->isWorker() || Auth::user()->isAdmin())
             <div class="pt-2 pb-3 space-y-1">
                 <x-responsive-nav-link :href="route('team')" :active="request()->routeIs('team')">
                     {{ __('navigation.team') }}
                 </x-responsive-nav-link>
+            </div>
+            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                <x-nav-link :href="route('orders')" :active="request()->routeIs('orders')">
+                    {{ __('navigation.orders') }}
+                </x-nav-link>
             </div>
             <div class="pt-2 pb-3 space-y-1">
                 <x-responsive-nav-link :href="route('warehouse')" :active="request()->routeIs('warehouse')">

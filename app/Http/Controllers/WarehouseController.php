@@ -58,12 +58,23 @@ class WarehouseController extends Controller
             'delivery' => 'required|date',
         ]);
 
-        // Create a new record in the database
-        Warehouse::create($data);
+        // Check if a record with the same product name already exists
+        $existingProduct = Warehouse::where('name', $request->input('name'))->first();
+
+        if ($existingProduct) {
+            // If the product already exists, update its quantity
+            $existingProduct->update([
+                'quantity' => $existingProduct->quantity + $request->input('quantity'),
+            ]);
+        } else {
+            // If the product doesn't exist, create a new record
+            Warehouse::create($data);
+        }
 
         // Redirect the user after successful saving
         return redirect()->route('warehouse')->with('status', 'Record added successfully!');
     }
+
 
     /**
      * Display the specified resource.

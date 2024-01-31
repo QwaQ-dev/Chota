@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
+            $table->integer("user_id");
             $table->string('username');
             $table->string('typeworks');
             $table->string('quantity');
             $table->string('summ');
-            $table->string('executor');
+//            $table->string('executor');
             $table->string('typeuser');
             $table->integer('status_id')->default(0);
             $table->timestamps();
