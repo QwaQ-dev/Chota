@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('typeworks');
             $table->string('quantity');
             $table->string('summ');
+            $table->string('names')->default('сырье');
 //            $table->string('executor');
             $table->string('typeuser');
             $table->integer('status_id')->default(0);

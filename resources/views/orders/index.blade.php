@@ -51,18 +51,17 @@
                     </datalist>
                 </div>
 
-                <div class="max-w-xl">
-                    <x-input-label for="quantity" :value="__('Выберите сырье со склада')" />
-                    <x-text-input id="quantity" name="quantity" type="text" class="mt-1 block w-full" list="quantity"
-                                  required autocomplete="quantity" />
-                    <datalist id="quantity">
-                        <option value="Изготовление импланта">
-                        <option value="Изготовление протезов">
-                        <option value="Изготовление виниров">
-                        <option value="Изготовление циркониевых коронок">
-                        <option value="Изготовление керамических накладок">
-                        <option value="Другое">
-                    </datalist>
+                <div class="w-full">
+                    <x-input-label for="quantity" :value="__('Выберите сырье и укажите количество:')" />
+                    <div class="flex">
+                        <x-text-input id="quantity" name="quantity" type="text" class="mt-1 block w-1/2" list="quantity"
+                                      required autocomplete="quantity"/>
+                        <x-select name="names" class="w-1/4 mt-1 block w-1/2 ">
+                            @foreach($warehouses as $warehouse)
+                                <option value="{{ $warehouse['name'] }}"> {{$warehouse['name']}}</option>
+                            @endforeach
+                        </x-select>
+                    </div>
                 </div>
 
                 <div class="max-w-xl">
@@ -105,21 +104,24 @@
                             @if (count($statusOrders) > 0)
                                 @foreach ($statusOrders as $order)
                                     <div class="bg-white dark:bg-gray-800 p-6 m-4 rounded-lg shadow-md mb-8 w-full">
-                                    <div class="flex flex-col m-4">
-                                        <span class="font-bold">{{ __('Имя клиента:  ') }}</span> {{ $order->username }}
-                                    </div>
-                                    <div class="flex flex-col m-4">
-                                        <span class="font-bold">{{ __('Тип работы: ') }}</span> {{ $order->typeworks }}
-                                    </div>
-                                    <div class="flex flex-col m-4">
-                                        <span class="font-bold">{{ __('Количество сырья: ') }}</span> {{ $order->quantity }}
-                                    </div>
-                                    <div class="flex flex-col m-4">
-                                        <span class="font-bold">{{ __('Сумма заказа: ') }}</span> {{ $order->summ }}
-                                    </div>
-                                    <div class="flex flex-col m-4">
-                                        <span class="font-bold">{{ __('Исполнитель: ') }}</span> {{ $order->user_id }}
-                                    </div>
+                                        <div class="flex flex-col m-4">
+                                            <span class="font-bold">{{ __('Имя клиента:  ') }}</span> {{ $order->username }}
+                                        </div>
+                                        <div class="flex flex-col m-4">
+                                            <span class="font-bold">{{ __('Тип работы: ') }}</span> {{ $order->typeworks }}
+                                        </div>
+                                        <div class="flex flex-col m-4">
+                                            <span class="font-bold">{{ __('Количество сырья: ') }}</span> {{ $order->quantity }}
+                                        </div>
+                                        <div class="flex flex-col m-4">
+                                            <span class="font-bold">{{ __('Сырье: ') }}</span> {{ $order->names }}
+                                        </div>
+                                        <div class="flex flex-col m-4">
+                                            <span class="font-bold">{{ __('Сумма заказа: ') }}</span> {{ $order->summ }}
+                                        </div>
+                                        <div class="flex flex-col m-4">
+                                            <span class="font-bold">{{ __('Исполнитель: ') }}</span> {{ $order->user_id }}
+                                        </div>
                                         <div class="flex justify-between mt-4">
                                             <form method="POST" action="{{ route('orders.accept', $order->id) }}">
                                                 @csrf

@@ -36,14 +36,6 @@
                 <x-input-label for="quantity" :value="__('Выберите сырье со склада')" />
                 <x-text-input id="quantity" name="quantity" type="text" class="mt-1 block w-full" list="quantity"
                               required autocomplete="quantity" />
-                <datalist id="quantity">
-                    <option value="Изготовление импланта">
-                    <option value="Изготовление протезов">
-                    <option value="Изготовление виниров">
-                    <option value="Изготовление циркониевых коронок">
-                    <option value="Изготовление керамических накладок">
-                    <option value="Другое">
-                </datalist>
             </div>
 
             <div class="max-w-xl">

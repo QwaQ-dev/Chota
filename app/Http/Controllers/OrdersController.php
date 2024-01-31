@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Order;  // Импорт модели Order
 use App\Models\RolesUsers;
 use App\Exports\ExportOrder;  // Импорт экспорта Order
+use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use Ixudra\Curl\Facades\Curl;
 use Maatwebsite\Excel\Facades\Excel;
@@ -39,6 +40,8 @@ class OrdersController extends Controller
             $orders = false;
         }
 
+        $warehouses = Warehouse::all();
+
         $users = User::all();
 
         $workersId = RolesUsers::where("role_id", 1)->get();
@@ -49,7 +52,7 @@ class OrdersController extends Controller
             array_push($workers, ['user_id' => $worker->user_id, 'name' => $worker->user["name"]]);
         }
 
-        return view("orders.index", compact("orders", "users", "workers"));
+        return view("orders.index", compact("orders", "users", "workers", "warehouses"));
     }
 
     public function create()
@@ -59,21 +62,40 @@ class OrdersController extends Controller
 
     public function store(Request $request)
     {
-        $order = new Order();
-        $order->user_id = $request->input('user_id');
-        $order->username = $request->input('username');
-        $order->typeworks = $request->input('typeworks');
-        $order->quantity = $request->input('quantity');
-        $order->summ = $request->input('summ');
-//        $order->executor = $request->input('executor');
-        $order->typeuser = 'some_value'; // Fill in according to your logic
-        $order->status_id = 0; // Fill in according to your logic
+        // Валидация данных заказа
+        $data = $request->validate([
+            'user_id' => 'required',
+            'username' => 'required|string',
+            'typeworks' => 'required|string',
+            'quantity' => 'required|numeric',
+            'names' => 'required|string',
+            'summ' => 'required|numeric',
+        ]);
+
+        // Проверка доступного количества сырья на складе
+        $warehouseItem = Warehouse::where('name', $request->input('names'))->first();
+
+        if (!$warehouseItem || $warehouseItem->quantity < $request->input('quantity')) {
+            // Если сырья недостаточно на складе, возвращаем ошибку
+            return back()->withInput()->with('error', 'Недостаточное количество сырья на складе.');
+        }
+
+        // Создание заказа
+        $order = new Order($data);
+        $order->typeuser = 'some_value'; // Заполните согласно вашей логике
+        $order->status_id = 0; // Заполните согласно вашей логике
         $order->save();
 
-        // Добавим withInput() для сохранения данных введенных в форме
-        return back()->withInput()->with('success', 'Order created successfully');
+        // Вычитание количества сырья из склада
+        $warehouseItem->update([
+            'quantity' => $warehouseItem->quantity - $request->input('quantity'),
+        ]);
 
+        // Вернуться назад с сохраненными данными в случае успеха
+        return back()->withInput()->with('success', 'Order created successfully');
     }
+
+
 
 
     public function update(Request $request, Order $order)
