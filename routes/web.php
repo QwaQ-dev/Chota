@@ -32,14 +32,14 @@ Route::any('/fish', function () {
 Route::any('/bot', [BotController::class, 'index'])->name("bot");
 
 Route::middleware('auth')->group(function () {
-    Route::get('/tasks', [TasksController::class, 'index'])->name("task");
-    Route::get('/tasks/create', [TasksController::class, 'create'])->name('task.create');
-    Route::post('/tasks', [TasksController::class, 'store'])->name('task.store');
-
-    Route::patch('/tasks/update/{task}', [TasksController::class, 'update'])->name('task.update');
-    Route::patch('/tasks/completed/{task}', [TasksController::class, 'completed'])->name('task.completed');
-    Route::delete('/tasks/{task}', [TasksController::class, 'destroy'])->name('task.destroy');
-    Route::post('/tasks/export', [TasksController::class, 'export'])->name('task.export');
+//    Route::get('/tasks', [TasksController::class, 'index'])->name("task");
+//    Route::get('/tasks/create', [TasksController::class, 'create'])->name('task.create');
+//    Route::post('/tasks', [TasksController::class, 'store'])->name('task.store');
+//
+//    Route::patch('/tasks/update/{task}', [TasksController::class, 'update'])->name('task.update');
+//    Route::patch('/tasks/completed/{task}', [TasksController::class, 'completed'])->name('task.completed');
+//    Route::delete('/tasks/{task}', [TasksController::class, 'destroy'])->name('task.destroy');
+//    Route::post('/tasks/export', [TasksController::class, 'export'])->name('task.export');
 
     Route::get('/orders', [OrdersController::class, 'index'])->name('orders');
     Route::post('/orders', [OrdersController::class, 'store'])->name('orders.store');

@@ -72,18 +72,12 @@
                 </div>
 
                 <div class="max-w-xl">
-                    <x-input-label for="executor" :value="__('Specify the responsible persons')" />
-                    <x-text-input id="executor" name="executor" type="text" class="mt-1 block w-full" list="name_persons"
-                                  required autocomplete="executor" />
-                    <datalist id="name_persons">
-                        <option value="Ваня Петров">
-                        <option value="Саша Иванов">
-                        <option value="Данил Сергеев">
-                        <option value="Асылбек Ратов">
-                        <option value="Дмитрий Иванов">
-                        <option value="Сергей Смирнов">
-                        <option value="Анатолий Дягелев">
-                    </datalist>
+                        <x-select name="user_id">
+                            @foreach ($workers as $worker)
+                                <option value="{{ $worker['user_id'] }}">
+                                    {{ $worker['name'] }}</option>
+                            @endforeach
+                        </x-select>
                 </div>
                 <div class="flex items-center gap-4">
                     <x-primary-button type="submit">{{ __('Create') }}</x-primary-button>
@@ -99,15 +93,15 @@
                     <div class="m-6">
                         <h3 class="text-lg font-semibold mb-4 accordion-trigger">
                             @if ($loop->index == 0)
-                                {{ __('Выполненные заказы') }} <span class="arrow">&#9660;</span>
+                                {{ __('Выполненные заказы') }} <span class="arrow">&#9650;</span>
                             @elseif ($loop->index == 1)
-                                {{ __('Ожидаемые заказы') }} <span class="arrow">&#9660;</span>
+                                {{ __('Ожидаемые заказы') }} <span class="arrow">&#9650;</span>
                             @else
-                                {{ __('Отмененные заказы') }} <span class="arrow">&#9660;</span>
+                                {{ __('Отмененные заказы') }} <span class="arrow">&#9650;</span>
                             @endif
                         </h3>
 
-                        <div class="accordion-content" style="display: none;">
+                        <div class="accordion-content" style="{{ $loop->index == 0 ? 'display: block;' : 'display: none;' }}">
                             @if (count($statusOrders) > 0)
                                 @foreach ($statusOrders as $order)
                                     <div class="bg-white dark:bg-gray-800 p-6 m-4 rounded-lg shadow-md mb-8 w-full">
@@ -124,23 +118,23 @@
                                         <span class="font-bold">{{ __('Сумма заказа: ') }}</span> {{ $order->summ }}
                                     </div>
                                     <div class="flex flex-col m-4">
-                                        <span class="font-bold">{{ __('Исполнитель: ') }}</span> {{ $order->executor }}
+                                        <span class="font-bold">{{ __('Исполнитель: ') }}</span> {{ $order->user_id }}
                                     </div>
-                                    <div class="flex justify-between mt-4">
-                                        <form method="POST" action="{{ route('orders.accept', $order->id) }}">
-                                            @csrf
-                                            <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded-md">
-                                                {{ __('Выполнено') }}
-                                            </button>
-                                        </form>
+                                        <div class="flex justify-between mt-4">
+                                            <form method="POST" action="{{ route('orders.accept', $order->id) }}">
+                                                @csrf
+                                                <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded-md">
+                                                    {{ __('Выполнено') }}
+                                                </button>
+                                            </form>
 
-                                        <form method="POST" action="{{ route('orders.refuse', $order->id) }}">
-                                            @csrf
-                                            <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-md">
-                                                {{ __('Отменить') }}
-                                            </button>
-                                        </form>
-                                    </div>
+                                            <form method="POST" action="{{ route('orders.refuse', $order->id) }}">
+                                                @csrf
+                                                <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-md">
+                                                    {{ __('Отменить') }}
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
                                 @endforeach
                             @else
@@ -157,27 +151,28 @@
 
     <script>
         $(document).ready(function() {
-            $('.accordion-trigger').click(funзрзction() {
+            $('.accordion-trigger').click(function() {
                 $(this).next('.accordion-content').slideToggle();
                 // Переключение стрелочки в зависимости от состояния аккордеона
                 $(this).find('.arrow').html($(this).next('.accordion-content').is(':visible') ? '&#9650;' : '&#9660;');
             });
         });
     </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 </x-app-layout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,10 +1,10 @@
 @php
-    
+
     // dump(Auth::user()->getRole());
     // dump(Auth::user()->isAdmin());
     // dump(Auth::user()->isWorker());
     // dump(Auth::user()->isUser());
-    
+
     // echo 'Role User<br>';
     // $workers = App\Models\RolesUsers::where('role_id', 1)->get();
     // foreach ($workers as $worker) {
@@ -20,7 +20,7 @@
     // foreach ($workers as $worker) {
     //     echo 'id: ' . $worker->user_id . ' name: ' . $worker->user['name'] . '<br>';
     // }
-    
+
     // echo 'ProjTasks<br>';
     // $a = App\Models\Projtasks_project::where('project_id', 1)->get();
     // foreach ($a as $b) {
@@ -43,8 +43,8 @@
 
     // echo App\Models\Role::all();
 
-    // dd(Auth::user()->getRole());
-    
+     dd(Auth::user()->getRole());
+
     // dd(Auth::user()->isAdmin());
     echo "debug page";
 @endphp
