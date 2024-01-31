@@ -157,7 +157,7 @@
 
     <script>
         $(document).ready(function() {
-            $('.accordion-trigger').click(function() {
+            $('.accordion-trigger').click(funзрзction() {
                 $(this).next('.accordion-content').slideToggle();
                 // Переключение стрелочки в зависимости от состояния аккордеона
                 $(this).find('.arrow').html($(this).next('.accordion-content').is(':visible') ? '&#9650;' : '&#9660;');
